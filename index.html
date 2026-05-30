@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEON VOID — Survive the Darkness</title>
+  <meta name="description" content="Neon Void – A futuristic space shooter. Survive endless waves of enemies in the void." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- ============================================================
+       ZONE ADSENSE — Bannière Top (à activer en Phase 1)
+       Remplace le div.ad-placeholder par le script AdSense réel
+  =============================================================== -->
+  <!-- 
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  -->
+</head>
+<body>
+
+  <!-- ===== BACKGROUND PARTICLES ===== -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ===== BANNIÈRE PUB HAUT — ZONE ADSENSE ===== -->
+  <div class="ad-zone ad-zone--top" id="ad-top">
+    <div class="ad-placeholder">
+      <span class="ad-label">PUBLICITÉ</span>
+      <!-- PHASE 1 : Colle ici ton bloc AdSense 728x90 (Leaderboard) -->
+      <!--
+      <ins class="adsbygoogle"
+           style="display:inline-block;width:728px;height:90px"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      -->
+      <div class="ad-mock">728 × 90 — Leaderboard AdSense</div>
+    </div>
+  </div>
+
+  <!-- ===== WRAPPER PRINCIPAL ===== -->
+  <div class="layout-wrapper">
+
+    <!-- ===== PUB GAUCHE — ZONE ADSENSE ===== -->
+    <aside class="ad-zone ad-zone--side ad-zone--left" id="ad-left">
+      <div class="ad-placeholder ad-placeholder--vertical">
+        <span class="ad-label">PUB</span>
+        <!-- PHASE 1 : Bloc AdSense 160x600 (Wide Skyscraper) -->
+        <!--
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:160px;height:600px"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        -->
+        <div class="ad-mock ad-mock--vertical">160 × 600</div>
+      </div>
+    </aside>
+
+    <!-- ===== ZONE CENTRALE ===== -->
+    <main class="game-center">
+
+      <!-- ÉCRAN TITRE -->
+      <div class="screen" id="screen-title">
+        <div class="title-glow-ring"></div>
+        <div class="title-content">
+          <div class="game-subtitle">[ SYSTÈME : ALERTE ROUGE ]</div>
+          <h1 class="game-title">NEON<br/><span>VOID</span></h1>
+          <p class="game-tagline">Survive the infinite darkness</p>
+          <div class="hud-line"></div>
+          <div class="controls-info">
+            <div class="ctrl"><span class="key">↑ ↓ ← →</span> Déplacer</div>
+            <div class="ctrl"><span class="key">ESPACE</span> Tirer</div>
+            <div class="ctrl"><span class="key">SHIFT</span> Boost</div>
+          </div>
+          <button class="btn-primary" id="btn-start">
+            <span class="btn-text">LANCER LA MISSION</span>
+            <span class="btn-glow"></span>
+          </button>
+          <div class="highscore-display">
+            MEILLEUR SCORE : <span id="title-highscore">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CANVAS DE JEU -->
+      <canvas id="game-canvas" width="800" height="600"></canvas>
+
+      <!-- HUD (affiché pendant le jeu) -->
+      <div class="hud" id="hud">
+        <div class="hud-left">
+          <div class="hud-score">SCORE <span id="hud-score">0</span></div>
+          <div class="hud-wave">VAGUE <span id="hud-wave">1</span></div>
+        </div>
+        <div class="hud-center">
+          <div class="hud-lives" id="hud-lives">
+            <!-- Vies générées par JS -->
+          </div>
+        </div>
+        <div class="hud-right">
+          <div class="hud-boost">
+            BOOST <div class="boost-bar"><div class="boost-fill" id="boost-fill"></div></div>
+          </div>
+          <div class="hud-multiplier">×<span id="hud-mult">1</span></div>
+        </div>
+      </div>
+
+      <!-- ÉCRAN PAUSE -->
+      <div class="screen screen--overlay" id="screen-pause" style="display:none">
+        <div class="overlay-panel">
+          <h2 class="overlay-title">PAUSE</h2>
+          <div class="overlay-score">Score : <span id="pause-score">0</span></div>
+          <button class="btn-primary" id="btn-resume">REPRENDRE</button>
+          <button class="btn-secondary" id="btn-quit-pause">QUITTER</button>
+        </div>
+      </div>
+
+      <!-- ÉCRAN GAME OVER -->
+      <div class="screen screen--overlay" id="screen-gameover" style="display:none">
+        <div class="overlay-panel overlay-panel--death">
+          <div class="death-icon">☠</div>
+          <h2 class="overlay-title overlay-title--red">GAME OVER</h2>
+          <div class="overlay-score">Score final : <span id="go-score">0</span></div>
+          <div class="overlay-highscore">Record : <span id="go-highscore">0</span></div>
+
+          <!-- BOUTON REWARDED VIDEO (Phase 1 simulé, Phase 2+ réel) -->
+          <button class="btn-rewarded" id="btn-continue-ad">
+            <span class="btn-rewarded-icon">▶</span>
+            <span class="btn-rewarded-text">Regarder une pub pour revivre (+1 vie)</span>
+          </button>
+
+          <!-- Overlay de simulation pub -->
+          <div class="ad-rewarded-overlay" id="ad-rewarded-overlay" style="display:none">
+            <div class="ad-rewarded-content">
+              <div class="ad-rewarded-label">PUBLICITÉ EN COURS</div>
+              <div class="ad-rewarded-timer">
+                Fermeture dans <span id="ad-countdown">5</span>s
+              </div>
+              <div class="ad-rewarded-progress-bar">
+                <div class="ad-rewarded-progress-fill" id="ad-progress-fill"></div>
+              </div>
+              <!-- PHASE 1+ : Remplacer le setTimeout par l'appel SDK pub ici -->
+            </div>
+          </div>
+
+          <div class="go-separator">— ou —</div>
+          <button class="btn-primary" id="btn-restart">REJOUER</button>
+          <button class="btn-secondary" id="btn-quit-go">MENU PRINCIPAL</button>
+        </div>
+      </div>
+
+      <!-- ÉCRAN VAGUE (transition) -->
+      <div class="screen screen--overlay screen--wave" id="screen-wave" style="display:none">
+        <div class="wave-announce">
+          <div class="wave-label">VAGUE</div>
+          <div class="wave-number" id="wave-number">2</div>
+          <div class="wave-sub" id="wave-sub">Prépare-toi...</div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ===== PUB DROITE — ZONE ADSENSE ===== -->
+    <aside class="ad-zone ad-zone--side ad-zone--right" id="ad-right">
+      <div class="ad-placeholder ad-placeholder--vertical">
+        <span class="ad-label">PUB</span>
+        <!-- PHASE 1 : Bloc AdSense 160x600 (Wide Skyscraper) -->
+        <!--
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:160px;height:600px"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        -->
+        <div class="ad-mock ad-mock--vertical">160 × 600</div>
+      </div>
+    </aside>
+
+  </div><!-- /layout-wrapper -->
+
+  <!-- ===== BANNIÈRE PUB BAS — ZONE ADSENSE ===== -->
+  <div class="ad-zone ad-zone--bottom" id="ad-bottom">
+    <div class="ad-placeholder">
+      <span class="ad-label">PUBLICITÉ</span>
+      <!-- PHASE 1 : Bloc AdSense 728x90 -->
+      <!--
+      <ins class="adsbygoogle"
+           style="display:inline-block;width:728px;height:90px"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      -->
+      <div class="ad-mock">728 × 90 — Leaderboard AdSense</div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
